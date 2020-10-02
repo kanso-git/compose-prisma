@@ -1,0 +1,33 @@
+version: '3.1'
+services:
+  postgres:
+    restart: always
+    ports:
+      - '5432:5432'
+    image: 'postgres:latest'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    secrets:
+      - psql_user
+      - psql_password
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/psql_password
+      POSTGRES_USER_FILE: /run/secrets/psql_user
+  prisma:
+    image: prismagraphql/prisma:1.34
+    restart: always
+    ports:
+      - '4466:4466'
+    secrets:
+      - prisma_config
+    environment:
+      PRISMA_CONFIG_FILE: /run/secrets/prisma_config
+volumes:
+  db-data:
+secrets:
+  psql_user:
+    file: ./psql_user.txt
+  psql_password:
+    file: ./psql_password.txt
+  prisma_config:
+    file: ./prisma_config.txt
